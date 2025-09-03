@@ -30,14 +30,15 @@ export default function LoginPage() {
     try {
       const response = await loginUser(data);
       login(response.token, response.user);
-      toast.success('login successfully')
-      // Role অনুযায়ী redirect করুন
-      if (data.role === 'PATIENT') {
+      toast.success('Login successful');
 
-        router.push('/patient/dashboard');
-      } else {
-        router.push('/doctor/dashboard');
-      }
+      setTimeout(() => {
+        if (data.role === 'PATIENT') {
+          router.push('/patient/dashboard');
+        } else if (data.role === 'DOCTOR') {
+          router.push('/doctor/dashboard');
+        }
+      }, 300); 
     } catch (error) {
       console.error('Login failed:', error);
       toast.error('Login failed. Please check your credentials.');

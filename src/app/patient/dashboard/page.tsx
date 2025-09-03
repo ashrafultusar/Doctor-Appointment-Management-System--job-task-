@@ -1,4 +1,4 @@
-// app/patient/dashboard/page.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -25,9 +25,8 @@ export default function PatientDashboard() {
   const [bookingStatus, setBookingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const user = useAuthStore((state) => state.user);
-  const limit = 6; // Number of doctors per page
+  const limit = 6; 
 
-  // Fetch doctors with pagination and filters
   const { data: doctorsData, isLoading: loadingDoctors } = useQuery({
     queryKey: ["doctors", currentPage, searchTerm, selectedSpecialization],
     queryFn: () => 
@@ -39,7 +38,6 @@ export default function PatientDashboard() {
       }),
   });
 
-  // Fetch specializations for filter
   const { data: specializations = [] } = useQuery({
     queryKey: ["specializations"],
     queryFn: getSpecializations,
@@ -47,7 +45,7 @@ export default function PatientDashboard() {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1); 
   };
 
   const handleSpecializationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -160,11 +158,7 @@ export default function PatientDashboard() {
                   {doctorsData?.doctors?.map((doctor: Doctor) => (
                     <div key={doctor.id} className="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
                       <div className="flex items-center mb-4">
-                        <img
-                          src={doctor.photo_url || "/default-avatar.png"}
-                          alt={doctor.name}
-                          className="w-16 h-16 rounded-full object-cover mr-4"
-                        />
+                     
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">{doctor.name}</h3>
                           <p className="text-sm text-gray-600">{doctor.specialization}</p>

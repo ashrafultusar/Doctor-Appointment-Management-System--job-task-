@@ -1,4 +1,4 @@
-// app/patient/appointments/page.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -26,8 +26,7 @@ export default function PatientAppointments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [cancellingAppointment, setCancellingAppointment] = useState<string | null>(null);
 
-  const user = useAuthStore((state) => state.user);
-  const limit = 5;
+
 
   const { data: appointmentsData, isLoading, refetch } = useQuery({
     queryKey: ["appointments", "patient", currentPage, selectedStatus],
@@ -120,11 +119,7 @@ export default function PatientAppointments() {
                     <div key={appointment.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center space-x-4">
-                          <img
-                            src={appointment.doctor.photo_url || "/default-avatar.png"}
-                            alt={appointment.doctor.name}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
+                         
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900">{appointment.doctor.name}</h3>
                             <p className="text-sm text-gray-600">{appointment.doctor.specialization}</p>

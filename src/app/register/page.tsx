@@ -1,4 +1,3 @@
-// app/register/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -17,7 +16,6 @@ export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Specializations fetch করুন Doctor registration এর জন্য
   const { data: specializations = [] } = useQuery({
     queryKey: ['specializations'],
     queryFn: getSpecializations,
@@ -41,8 +39,12 @@ export default function RegisterPage() {
     try {
       const response = await registerPatient(data);
       login(response.token, response.user);
-      toast.success('login successfully')
-      router.push('/patient/dashboard');
+      toast.success('Registration successful! Redirecting to dashboard...');
+      
+      // Increased delay to ensure state is updated
+      setTimeout(() => {
+        router.push('/patient/dashboard');
+      }, 300);
     } catch (error) {
       console.error('Registration failed:', error);
       toast.error('Registration failed. Please try again.');
@@ -56,8 +58,12 @@ export default function RegisterPage() {
     try {
       const response = await registerDoctor(data);
       login(response.token, response.user);
-      toast.success('login successfully')
-      router.push('/doctor/dashboard');
+      toast.success('Registration successful! Redirecting to dashboard...');
+      
+   
+      setTimeout(() => {
+        router.push('/doctor/dashboard');
+      }, 300);
     } catch (error) {
       console.error('Registration failed:', error);
       toast.error('Registration failed. Please try again.');

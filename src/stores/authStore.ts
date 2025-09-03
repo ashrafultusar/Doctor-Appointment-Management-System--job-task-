@@ -1,7 +1,42 @@
-// stores/authStore.ts
-import Cookies from 'js-cookie';
+
+
+interface User {
+  id: string;
+  name: string;
+}
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+}
+
+const cookies = {
+  authToken: null,
+  authUser: null,
+};
+
+const getAuthToken = (): string | null => {
+  return cookies.authToken;
+};
+
+const getAuthUser = (): User | null => {
+  return cookies.authUser;
+};
+
+const setAuthData = (token: string, user: User) => {
+  cookies.authToken = token;
+  cookies.authUser = user;
+};
+
+const clearAuthData = () => {
+  cookies.authToken = null;
+  cookies.authUser = null;
+};
+// --- End of mocking section ---
+
 import { create } from 'zustand';
-import { AuthState, User } from '@/types/auth';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface AuthStore extends AuthState {
   login: (token: string, user: User) => void;
@@ -9,48 +44,50 @@ interface AuthStore extends AuthState {
   initializeAuth: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
+// The fix is here: remove the <AuthStore> type from create.
+// Zustand's `create` function will correctly infer the type from the
+// `persist` middleware's return type.
+export const useAuthStore = create(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      isAuthenticated: false,
 
-  login: (token: string, user: User) => {
-    // Token কে cookie তে store করুন
-    Cookies.set('token', token, { expires: 7 }); // 7 days expiry
-    Cookies.set('user', JSON.stringify(user), { expires: 7 });
-    
-    set({ token, user, isAuthenticated: true });
-  },
-
-  logout: () => {
-    Cookies.remove('token');
-    Cookies.remove('user');
-    set({ token: null, user: null, isAuthenticated: false });
-  },
-
-  initializeAuth: () => {
-    try {
-      const token = Cookies.get('token');
-      const userStr = Cookies.get('user');
-      
-      // Check if userStr exists and is valid JSON
-      if (token && userStr && userStr !== 'undefined') {
-        const user = JSON.parse(userStr);
+      login: (token: string, user: User) => {
+        setAuthData(token, user);
         set({ token, user, isAuthenticated: true });
-      } else {
-        // Clear invalid cookies
-        if (userStr === 'undefined') {
-          Cookies.remove('user');
-          Cookies.remove('token');
-        }
+      },
+
+      logout: () => {
+        clearAuthData();
         set({ token: null, user: null, isAuthenticated: false });
+      },
+
+      initializeAuth: () => {
+        const token = getAuthToken();
+        const user = getAuthUser();
+        
+        if (token && user) {
+          set({ token, user, isAuthenticated: true });
+        } else {
+          set({ token: null, user: null, isAuthenticated: false });
+        }
+      },
+    }),
+    {
+      name: 'auth-storage',
+      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : null)),
+      partialize: (state) => ({ 
+        token: state.token,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated 
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.initializeAuth();
+        }
       }
-    } catch (error) {
-      console.error('Error initializing auth:', error);
-      // Clear invalid cookies on error
-      Cookies.remove('token');
-      Cookies.remove('user');
-      set({ token: null, user: null, isAuthenticated: false });
     }
-  },
-}));
+  )
+);
