@@ -1,4 +1,5 @@
-import Cookies from 'js-cookie'; 
+// stores/authStore.ts
+import Cookies from 'js-cookie';
 import { create } from 'zustand';
 import { AuthState, User } from '@/types/auth';
 
@@ -28,12 +29,28 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 
   initializeAuth: () => {
-    const token = Cookies.get('token');
-    const userStr = Cookies.get('user');
-    
-    if (token && userStr) {
-      const user = JSON.parse(userStr);
-      set({ token, user, isAuthenticated: true });
+    try {
+      const token = Cookies.get('token');
+      const userStr = Cookies.get('user');
+      
+      // Check if userStr exists and is valid JSON
+      if (token && userStr && userStr !== 'undefined') {
+        const user = JSON.parse(userStr);
+        set({ token, user, isAuthenticated: true });
+      } else {
+        // Clear invalid cookies
+        if (userStr === 'undefined') {
+          Cookies.remove('user');
+          Cookies.remove('token');
+        }
+        set({ token: null, user: null, isAuthenticated: false });
+      }
+    } catch (error) {
+      console.error('Error initializing auth:', error);
+      // Clear invalid cookies on error
+      Cookies.remove('token');
+      Cookies.remove('user');
+      set({ token: null, user: null, isAuthenticated: false });
     }
   },
 }));

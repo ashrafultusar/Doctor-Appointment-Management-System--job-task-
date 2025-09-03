@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { LoginData } from '@/types/auth';
 import { loginSchema } from '@/lib/validations';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginData>({
@@ -29,23 +30,24 @@ export default function LoginPage() {
     try {
       const response = await loginUser(data);
       login(response.token, response.user);
-      
+      toast.success('login successfully')
       // Role অনুযায়ী redirect করুন
       if (data.role === 'PATIENT') {
+
         router.push('/patient/dashboard');
       } else {
         router.push('/doctor/dashboard');
       }
     } catch (error) {
       console.error('Login failed:', error);
-      alert('Login failed. Please check your credentials.');
+      toast.error('Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-white text-black">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <h2 className="text-2xl font-bold text-center">Login to Your Account</h2>
         

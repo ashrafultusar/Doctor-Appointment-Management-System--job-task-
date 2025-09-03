@@ -9,6 +9,7 @@ import { registerPatient, registerDoctor, getSpecializations } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 export default function RegisterPage() {
   const [activeTab, setActiveTab] = useState<'patient' | 'doctor'>('patient');
@@ -40,10 +41,11 @@ export default function RegisterPage() {
     try {
       const response = await registerPatient(data);
       login(response.token, response.user);
+      toast.success('login successfully')
       router.push('/patient/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
-      alert('Registration failed. Please try again.');
+      toast.error('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -54,10 +56,11 @@ export default function RegisterPage() {
     try {
       const response = await registerDoctor(data);
       login(response.token, response.user);
+      toast.success('login successfully')
       router.push('/doctor/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
-      alert('Registration failed. Please try again.');
+      toast.error('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
