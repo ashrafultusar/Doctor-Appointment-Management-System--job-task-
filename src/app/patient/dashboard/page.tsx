@@ -1,11 +1,12 @@
-import React from 'react';
+import ProtectedRoute from "@/components/ProtectedRoute";
 
-const page = () => {
-    return (
-        <div>
-            this is patient dashboard
-        </div>
-    );
-};
-
-export default page;
+export default function PatientDashboard() {
+  return (
+    <ProtectedRoute requiredRole="PATIENT">
+      <div>
+        <h1>Patient Dashboard</h1>
+        {/* Your dashboard content here */}
+      </div>
+    </ProtectedRoute>
+  );
+}
