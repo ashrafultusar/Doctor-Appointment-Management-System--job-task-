@@ -20,13 +20,7 @@ const Navbar: React.FC = () => {
       <div className="container px-6 py-3 mx-auto md:flex">
         {/* Logo & Mobile Menu Button */}
         <div className="flex items-center justify-between">
-          <Link href="#">
-            <img
-              className="w-auto h-6 sm:h-7"
-              src="https://merakiui.com/images/full-logo.svg"
-              alt="Logo"
-            />
-          </Link>
+         
 
           {/* Mobile Menu Button */}
           <div className="flex lg:hidden ">
@@ -79,7 +73,7 @@ const Navbar: React.FC = () => {
         >
           <div className="flex flex-col px-2 -mx-4 md:flex-row md:mx-10 md:py-0">
             <Link
-              href="#"
+              href="/"
               className="px-2.5 py-2 text-gray-700 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:mx-2"
             >
               Home
